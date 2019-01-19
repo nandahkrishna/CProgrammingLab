@@ -1,0 +1,91 @@
+#+TITLE: Exercise 1: Simple Programs
+#+AUTHOR: Nanda H Krishna
+#+DATE: 1 February 2018
+
+#+LaTeX_HEADER: \usepackage{palatino}
+#+LaTeX_HEADER: \usepackage[top=1in, bottom=1.25in, left=1.25in, right=1.25in]{geometry}
+#+LaTeX_HEADER: \usepackage{setspace} \usepackage{parskip}
+#+OPTIONS: toc:nil
+#+STARTUP: showeverything
+
+#+BEGIN_EXPORT latex
+\linespread{1.2}
+\setlength{\parindent}{0pt}
+#+END_EXPORT
+#+PROPERTY: header-args :exports both
+
+* Hello, World!
+*Problem description:* Write a program to print =Hello, World!= on the
+screen. 
+
+*Specification:* The program prints the string on =stdout=.
+
+*Program design:* the function =main()= calls =printf()= to print the
+string on =stdout=.
+
+*Program:*
+#+BEGIN_SRC C :cmdline
+#include<stdio.h>
+int main()
+{
+  printf("Hello, World!");
+  return 0;
+}
+#+END_SRC
+
+*Output:*
+#+RESULTS:
+: Hello World!
+
+* Power 
+
+*Problem description:* Write a program to calculate =a^n=.
+
+*Specification:* The function =power()= takes base =a= and power =n=
+(+ve or -ve) as inputs and returns output =a^n=, using =powp()= which
+takes =a= and =n= where =n= is positive.
+
+*Prototype:*
+#+BEGIN_EXAMPLE
+int powp(int a, int n)
+float power(int a, int n)
+#+END_EXAMPLE
+
+*Program design:* The function =powp(a, n)= calculates =a^n= for +ve
+=n= and =power(a, n)= uses it to calculate =a^n= for +ve and -ve
+=n=. The =main()= function is used for testing.
+
+*Program:*
+#+BEGIN_SRC C :cmdline
+#include<stdio.h>
+int powp(int x, int n) // +ve n
+{
+  int p = 1, i = 1;
+  while(i++ <= n) p *= x;
+  return p;
+}
+float power(int x, int n) // +ve and -ve n
+{
+  if(n < 0)
+    return 1.0/powp(x,-n);
+  else
+    return powp(x,n);
+}
+int main()
+{
+  int a, m;
+  scanf("%d", &a);
+  scanf("%d", &m);
+  printf("%f", power(a,m));
+  return 0;
+}
+#+END_SRC
+
+*Test Input:*
+#+BEGIN_EXAMPLE
+2 -1
+#+END_EXAMPLE
+
+*Output:*
+#+RESULTS:
+: 0.5

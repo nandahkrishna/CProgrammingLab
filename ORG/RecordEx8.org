@@ -1,0 +1,707 @@
+#+TITLE: Exercise 8: Arrays of Strings
+#+AUTHOR: Nanda H Krishna
+#+DATE: 22 March 2018
+
+#+LaTeX_HEADER: \usepackage{palatino}
+#+LaTeX_HEADER: \usepackage[top=1in, bottom=1.25in, left=1.25in, right=1.25in]{geometry}
+#+LaTeX_HEADER: \usepackage{setspace} \usepackage{parskip}
+#+OPTIONS: toc:nil
+#+STARTUP: showeverything
+
+#+BEGIN_EXPORT latex
+\linespread{1.2}
+\setlength{\parindent}{0pt}
+#+END_EXPORT
+#+PROPERTY: header-args :exports both
+
+* Count the number of strings
+
+*Problem description:* Define a function to count the number of
+strings in the array of strings.
+
+*Specification:* Function =strings_length()= takes an array of
+pointers as input and returns the length of the array.
+
+*Prototype:*
+#+BEGIN_EXAMPLE
+int strings_length(char* names[])
+#+END_EXAMPLE
+
+*Program design:* The program consists of =strings_length(char* names[])= which
+counts the number of strings, and =main()= which is used for testing.
+
+*Program:*
+#+BEGIN_SRC C :cmdline
+  #include<stdio.h>
+  int strings_length(char* names[])
+  {
+    int i;
+    for(i = 0; names[i] != NULL; i++);
+    return i;
+  }
+  int main()
+  {
+    char* a[13] = {"January","February","March",
+		   "April","May","June","July",
+		   "August","September","October",
+		   "November","December", NULL};
+    printf("%d\n", strings_length(a));
+    return 0;
+  }
+#+END_SRC
+
+*Output:*
+#+RESULTS:
+: 12
+
+* Print an array of strings
+
+*Problem description:* Define a function to print the array of strings.
+
+*Specification:* The function takes the array of pointers as input and
+the output is the strings printed on =stdout=. 
+
+*Prototype:*
+#+BEGIN_EXAMPLE
+void strings_print(char* a[])
+#+END_EXAMPLE
+
+*Program design:* The function =strings_print(char* names[])= is used
+to print the array of strings and =main()= is used for testing.
+
+*Program:*
+#+BEGIN_SRC C :cmdline :results verbatim
+#include<stdio.h>
+  int strings_print(char* a[])
+  {
+    int i;
+    for(i = 0; a[i] != NULL; i++) printf("%s\n", a[i]);
+  }
+  int main()
+  {
+    char* a[13] = {"January","February","March",
+		   "April","May","June","July",
+		   "August","September","October",
+		   "November","December", NULL};
+    strings_print(a);
+    return 0;
+  }
+#+END_SRC
+
+*Output:*
+#+RESULTS:
+#+begin_example
+January
+February
+March
+April
+May
+June
+July
+August
+September
+October
+November
+December
+#+end_example 
+
+* Cloning a string
+
+*Problem description:* Write a function to create a clone for a C-string.
+
+*Specification:* The function =string_clone()= takes a string and
+returns the address of the clone.
+
+*Prototype:*
+#+BEGIN_EXAMPLE
+char* string_clone(char s[])
+#+END_EXAMPLE
+
+*Program design:* The program consists of a function
+=string_clone(char s[])=, which clones a string, and =main()=, which
+calls the function and prints the result on =stdout=.
+
+*Program:*
+#+BEGIN_SRC C :cmdline :results verbatim
+  #include<stdio.h>
+  char* string_clone(char s[])
+  {
+    char *t = (char*)malloc(strlen(s));
+    strcpy(t, s);
+    return t;
+  }
+  int main()
+  {
+    char *s = "In the beginning was the word.";
+    char *t = string_clone(s);
+    printf("%p %s\n", &s, s);
+    printf("%p %s", &t, t);
+  }
+#+END_SRC
+
+*Output:*
+#+RESULTS:
+: 0x7ffe2cfff798 In the beginning was the word.
+: 0x7ffe2cfff7a0 In the beginning was the word.
+
+* Read a sequence of lines from =stdin=
+
+*Problem description:* Write a function =strings_read(lines)= to read
+a sequence of lines from =stdin=. It stores the lines in an array of
+strings =char* lines[]=, and returns the count of lines as the 
+result. After reading each line from =stdin=, allocate memory using
+=string_clone()= and store it as a string in =char* lines[]=. Read
+the class name-list from stdin. Sort it and print it.
+
+*Specification:* Function =strings_read()= gets an array of pointers
+as input, reads the array and returns the length.
+
+*Prototype:*
+#+BEGIN_EXAMPLE
+char* string_clone(char s[])
+int strings_read(char* names[])
+void print_string(char* names[], int n)
+#+END_EXAMPLE
+
+*Program design:* The program consists of =string_clone(char s[])=,
+=strings_read(char* names[])=, and =print_string(char* names[], int n)=,
+all of which help to read the lines from =stdin= and print it on
+=stdout=. The =main()=, which calls the function.
+
+*Program:*
+#+BEGIN_SRC C :cmdline <Prog.in :results verbatim
+  #include<stdio.h>
+  #include<string.h>
+  #include<stdlib.h>
+  #define N 100
+  #define MAXLINE 1000
+  char* string_clone(char s[])
+  {
+    char* t = (char*)malloc(strlen(s)+1);
+    strcpy(t,s);
+    return t;  
+  }
+  int strings_read(char* names[])
+  {
+    char line[MAXLINE];
+    int i;
+    for(i = 0; fgets(line, MAXLINE, stdin) != NULL; i++) {
+      int n = strlen(line);
+      line[n-1] = '\0';
+      names[i] = string_clone(line);
+    }
+    return i; 
+  }
+  void print_string(char* names[], int n)
+  {
+    for(int i = 0; i < n; i++) {
+      printf("%s\n",names[i]);
+    }
+  }
+  int main()
+  {
+    char* names[N];
+    int n = strings_read(names);
+    print_string(names, n);
+  }
+#+END_SRC
+
+*Test Input:*
+#+BEGIN_EXAMPLE
+Alpha 001
+Bravo 002
+Charlie 003
+Delta 004
+Ergo 005
+Fuhrer 006
+Bond 007
+#+END_EXAMPLE
+
+*Output:*
+#+RESULTS:
+: Alpha 001
+: Bravo 002
+: Charlie 003
+: Delta 004
+: Ergo 005
+: Fuhrer 006
+: Bond 007
+
+* Sort an array of strings
+
+** Alphabetical order
+
+*Problem description:* Sort in alphabetical order an array of strings,
+using selection sort.
+
+*Specification:* Function =swap()= gets 2 strings as inputs and swaps them, 
+=strings_print()= gets an array of pointers as input and prints the strings,
+=min()= gets an array of pointers and 2 indices as inputs, and returns the index of the lowest
+string and =sel_sort()= gets an array of pointers and its length as input, and
+sorts the array in alphabetical order.
+
+*Prototype:*
+#+BEGIN_EXAMPLE
+void swap(char* a[], int i, int j)
+void strings_print(char* names[], int n)
+int min(char* a[], int low, int high)
+void sel_sort(char* a[], int n)
+#+END_EXAMPLE
+
+*Program design:* The program consists of =swap(char a[], char b[])=,
+=strings_print (char* names[])=, =min(char* a[], int low, int high)=
+and =sel_sort(char* a[], int n)=, which are used to sort the strings
+in alphabetical order, and =main()=, which calls the functions and
+prints the result on =stdout=.
+
+*Algorithm:*
+The algorithm to sort is as follows:
+#+BEGIN_EXAMPLE
+min(a[], l, h):
+  p = low
+  for i in range(l+1, h):
+    if a[i] < a[p]:
+      p = i
+  return p
+sel_sort(a[], n):
+  for i in range(n):  
+    m = min(a, i, n)
+    swap(a[i], a[m])  
+#+END_EXAMPLE
+
+*Program:*
+#+BEGIN_SRC C :cmdline :results verbatim
+  #include<stdio.h>
+  #include<string.h>
+  #include<stdlib.h>
+  void swap(char* a[], int i, int j)
+  {
+    char* t = a[i];
+    a[i] = a[j];
+    a[j] = t;
+  }
+  void strings_print(char* names[], int n)
+  {
+    for (int i = 0; i < n; i++)
+      printf("%s\n", names[i]);
+  }
+  int min(char* a[], int low, int high)
+  {
+    int i, p = low;
+    for(i = low + 1; i < high; i++) {
+      if(strcmp(a[i], a[p]) < 0) p = i;
+    }
+    return p;
+  }
+  void sel_sort(char* a[], int n)
+  {
+    for(int i = 0; i < n - 1; i++) {
+      int m = min(a, i, n);
+      swap(a, i, m);
+    }
+  }
+  int main()
+  {
+    char* a[13] = {"January","February","March",
+		   "April","May","June","July",
+		   "August","September","October",
+		   "November","December"};
+    sel_sort(a, 12);
+    strings_print(a, 12);
+    return 0;
+  }
+#+END_SRC
+
+*Output:*
+#+RESULTS:
+#+begin_example
+April
+August
+December
+February
+January
+July
+June
+March
+May
+November
+October
+September
+#+end_example
+
+** Based on string length
+
+*Problem description:* Sort an array of strings in ascending order of
+the string lengths.
+
+*Specification:* Function =string_clone()= gets a string as
+input, clones the string and returns it to the calling function,
+=strings_read()= gets an array of pointers as input, reads the
+array and returns the length, =minimum()= gets an array of
+pointers and 2 indices as input and returns the index of the string
+with minimum length to the calling function, =swap()= gets an
+array of pointers and 2 indices as input and swaps the two strings at
+those indices, =sel_sort_len()= gets an array of pointers and
+length as input and sorts the array based on length, and
+=print_string()= gets an array of pointers and its length as
+input and prints the output.
+
+*Prototype:*
+#+BEGIN_EXAMPLE
+char* string_clone(char s[])
+int strings_read(char* names[])
+int minimum(char* a[], int l, int h)
+void swap(char* m[], int a, int b)
+void sel_sort_len(char* m[], int l, int h)
+void print_string(char* names[], int n)
+#+END_EXAMPLE
+
+*Program design:* The program consists of =string_clone(char s[])=,
+=strings_read(char* names[])=, =minimum(char* a[], int l, int h)=,
+=swap(char* m[], int a, int b)=, =sel_sort_len(char* m[], int l, int h)=
+and =print_string(char* names[], int n)=, all of which help to sort the
+strings from =stdin= and print it on =stdout=, and =main()=, which is
+used for testing.
+
+*Algorithm:*
+The algorithm to sort is as follows:
+#+BEGIN_EXAMPLE
+minimum(a[], l, h):
+  m = l
+  for i in range(l+1, h):
+    if len(a[m]) > len(a[i]):
+      m = i
+  return m
+sel_sort_len(a, l, h):
+  for i in range(l, h-1):
+    m = minimum(a, i, h)
+    swap(a[i], a[m])
+#+END_EXAMPLE
+
+*Program:*
+#+BEGIN_SRC C :cmdline <Test.in :results verbatim
+  #include<stdio.h>
+  #include<string.h>
+  #include<stdlib.h>
+  #define N 100
+  #define MAXLINE 1000
+  char* string_clone(char s[])
+  {
+    char* t = (char*)malloc(strlen(s) + 1);
+    strcpy(t, s);
+    return t;
+  }
+  int strings_read(char* names[])
+  {
+    char line[MAXLINE];
+    int i;
+    for(i = 0; fgets(line, MAXLINE, stdin) != NULL; i++) {
+      int n = strlen(line);
+      line[n-1] = '\0';
+      names[i] = string_clone(line);
+    }
+    return i;
+  }
+  int minimum(char* a[], int l, int h)
+  {
+    int i, m = l;
+    for(i = l+1; i < h; i++) {
+      if(strlen(a[m]) > strlen(a[i]))
+	m = i;
+    }
+    return m;
+  }
+  void swap(char* m[],int a,int b)
+  {
+    char* t = m[a];
+    m[a] = m[b];
+    m[b] = t;
+  }
+  void sel_sort_len(char* m[], int l, int h)
+  {
+    int min;
+    for(int i = l; i < h - 1; i++) {
+      min = minimum(m,i,h);
+      swap(m, i, min);
+    }
+  }
+  void strings_print(char* names[], int n)
+  {
+    for(int i = 0; i < n; i++)
+      printf("%s\n",names[i]);
+  }
+  int main()
+  {
+    char* names[100];
+    int n = strings_read(names);
+    sel_sort_len(names, 0, n);
+    strings_print(names, n);
+  }
+#+END_SRC
+
+*Test Input:*
+#+BEGIN_EXAMPLE
+Nayeon
+Momo
+Jeongyeon
+Mina
+Dahyun
+Chaeyoung
+Jihyo
+Sana
+Tzuyu
+#+END_EXAMPLE
+
+*Output:*
+#+RESULTS:
+: Momo
+: Mina
+: Sana
+: Jihyo
+: Tzuyu
+: Nayeon
+: Dahyun
+: Jeongyeon
+: Chaeyoung
+
+* Search for a string
+
+*Problem description:* Search for a string in a sorted array of
+strings.
+
+*Specification:* Function =string_clone()= gets a string as
+input, clones the string and returns it to the calling function,
+=read_line()=, gets an array of pointers as input, reads the
+array and returns the length, and =binary_partition()=, which gets an
+array of pointers, a string, and 2 indices as inputs and returns the
+index where the string is found.  
+
+*Prototype:*
+#+BEGIN_EXAMPLE
+char* string_clone(char s[])
+int strings_read(char* names[])
+int binary_partition(char* m[],char n[],int low,int high)
+#+END_EXAMPLE
+
+*Program design:* The program consists of =string_clone(char s[])=,
+=strings_read(char* names[])=, and =binary_partition(char* m[],char
+n[],int low,int high)=, all of which help to get the input from
+=stdin= and find the index, and =main()=, which tests the functions.
+
+*Algorithm:*
+The algorithm to search using binary partition is as follows:
+#+BEGIN_EXAMPLE
+binary_partition(m,n,l,h):
+  while l != h:
+    mid = (l+h)//2
+    if n == m[mid]:
+      return mid
+    elif n < m[mid]:
+      h = mid
+    else:
+      l = mid + 1
+  return mid
+#+END_EXAMPLE
+
+*Program:*
+#+BEGIN_SRC C :cmdline <Test.in
+  #include<stdio.h>
+  #include<stdlib.h>
+  #include<string.h>
+  #define N 100
+  #define MAXLINE 1000
+  char* string_clone(char s[])
+  {
+    char* t = (char*)malloc(strlen(s));
+    strcpy(t, s);
+    return t;
+  }
+  int strings_read(char* names[])
+  {
+    char line[MAXLINE];
+    int i;
+    for(i = 0; fgets(line,MAXLINE,stdin) != NULL; i++) {
+      int n = strlen(line);
+      line[n - 1] = '\0';
+      names[i] = string_clone(line);
+    }
+    return i;
+  }
+  int binary_partition(char* m[],char n[],int low,int high)
+  {
+    int mid;
+    while(low != high) {
+      mid = (low+high)/2;
+      if(strcmp(n, m[mid]) == 0)
+	return mid;
+      else if(strcmp(n, m[mid]) < 0){
+	high = mid;
+      }
+      else {
+	low = mid + 1;
+      }
+    }
+    return high;
+  }
+  int main()
+  {
+    char* names[N];
+    int n = strings_read(names);
+    int r = binary_partition(names,"God", 0, n);
+    printf("%d\n",r);
+  }
+#+END_SRC
+
+*Test Input:*
+#+BEGIN_EXAMPLE
+Ant
+Boy
+Cat
+Dog
+Elf
+God
+Hat
+Ink
+Jet
+#+END_EXAMPLE
+
+*Output:*
+#+RESULTS:
+: 5
+
+* Insert a string in a sorted array of strings
+
+*Problem description:* Insert a string in the sorted array of strings
+using the =binary_partition()= function to obtain the right position.
+
+*Specification:* Function =string_clone()= gets a string as input,
+clones the string and returns it to the calling function,
+=strings_read()= gets an array of pointers as input, reads the
+array and returns the length, =binary_partition()= gets an
+array of pointers, a string, and 2 indices as inputs and returns the
+index where the string can be inserted, =insert()= gets an
+array of pointers, a string and 2 indices as inputs and adds the
+string to the array, and =print_string()= gets an array of
+pointers and its length as input and prints the output.
+
+*Prototype:*
+#+BEGIN_EXAMPLE
+char* string_clone(char s[])
+int strings_read(char* names[])
+int binary_partition(char* m[],char n[],int low,int high)
+void insert(char* a[], char k[],int r,int* n)
+void print_string(char* names[],int n)
+#+END_EXAMPLE
+
+*Program design:* The program consists of =string_clone(char s[])=,
+=read_line(char* names[])=, =binary_partition(char* m[],char n[],int
+low,int high)=, =insert(char* a[], char k[],int r,int* n)= and
+=print_string(char* names[],int n)=, all of which help to get the
+input from =stdin=, find the index, insert, and print it on =stdout=, and
+=main()=, which tests the function.
+
+*Algorithm:*
+The algorithm to insert is as follows:
+#+BEGIN_EXAMPLE
+insert(a, k, r, n):
+  int i = n - 1
+  while i >= r:
+    a[i+1] = a[i]
+    i--
+  a[r] = k
+  n += 1
+  return n
+#+END_EXAMPLE
+
+*Program:*
+#+BEGIN_SRC C :cmdline <Test.in
+  #include<stdio.h>
+  #include<stdlib.h>
+  #include<string.h>
+  #define N 100
+  #define MAXLINE 1000
+  char* string_clone(char s[])
+  {
+    char* t = (char*)malloc(strlen(s));
+    strcpy(t,s);
+    return t;
+  }
+  int strings_read(char* names[])
+  {
+    char line[MAXLINE];
+    int i;
+    for(i = 0; fgets(line,MAXLINE,stdin) != NULL; i++) {
+      int n = strlen(line);
+      line[n - 1] = '\0';
+      names[i] = string_clone(line);
+    }
+    return i;
+  }
+  void string_print(char* names[],int low ,int high)
+  {
+    for(int i = low; i < high; i++) {
+      printf("%s,\n",names[i]);
+    }
+    printf("\n");
+  }
+  int binary_partition(char* m[],char n[],int low,int high)
+  {
+    int mid;
+    while(low != high) {
+      mid = (low+high)/2;
+      if(strcmp(n,m[mid]) == 0)
+	return mid + 1;
+      else if(strcmp(n,m[mid]) < 0) {
+	high = mid;
+      }
+      else {
+	low = mid + 1;
+      }
+    }
+    return high + 1;
+  }
+  void insert(char* a[], char k[],int r,int* n){
+    int i = *n - 1;
+    while(i >= r) {
+      a[i+1] = a[i];
+      i--;
+    }
+    a[r] = (char*)malloc(strlen(k)+1);
+    strcpy(a[r], k);
+    (*n)++;
+  }
+  int main()
+  {
+    char* names[N];
+    int n = strings_read(names);
+    int r = binary_partition(names,"God",0,n);
+    insert(names,"Goddess",r,&n);
+    string_print(names,0,n);
+  }
+#+END_SRC
+ 
+*Test Input:*
+#+BEGIN_EXAMPLE
+Ant
+Boy
+Cat
+Dog
+Elf
+God
+Hat
+Ink
+Jet
+#+END_EXAMPLE
+
+*Output:*
+#+RESULTS:
+: Ant      
+: Boy      
+: Cat      
+: Dog      
+: Elf      
+: God      
+: Goddess  
+: Hat      
+: Ink      
+: Jet   
